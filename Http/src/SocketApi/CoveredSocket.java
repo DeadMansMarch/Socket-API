@@ -12,7 +12,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
-import org.omg.CORBA.Any;
 
 /**
  *
@@ -27,6 +26,7 @@ public class CoveredSocket {
     protected DataOutputStream COUTSTREAM;
     protected BufferedReader CINSTREAM;
     public Thread REFER;
+    
     public CoveredSocket(Socket CLIENT) throws IOException{
         this.CLIENT = CLIENT;
         
@@ -37,6 +37,10 @@ public class CoveredSocket {
         CINSTREAM = new BufferedReader(INSTREAM);
     }
     
+    public boolean readReady() throws IOException{
+        return CINSTREAM.ready();
+    }
+    
     public OutputStream getOutstream(){
         return OUTSTREAM;
     }
@@ -44,6 +48,7 @@ public class CoveredSocket {
     public void close() throws IOException{
         REFER.interrupt();
         CLIENT.close();
+        System.out.println("AXLE DEATH");
     }
     
     public void baseSend(String Data) throws IOException{

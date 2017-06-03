@@ -17,11 +17,19 @@ import java.net.UnknownHostException;
 public class IAddress extends SocketAddress{
     private String ADDRESS;
     private int PORT;
-    
+
     //Create an address.
     public IAddress(String ADDRESS,int PORT){
         this.ADDRESS = ADDRESS;
         this.PORT = PORT;
+    }
+    
+    public int getPORT() {
+        return PORT;
+    }
+
+    public String getADDRESS() {
+        return ADDRESS;
     }
     
     //Get an INET.

@@ -46,7 +46,7 @@ public class WebserverListener extends Listener {
     }
     
     //Webserver client intercept.
-    public class Accel extends Listener.accelerator{
+    public class Accel extends accelerator{
         public Accel(CoveredSocket CLIENT){
             super(CLIENT);
         }

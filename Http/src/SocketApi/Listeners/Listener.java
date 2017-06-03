@@ -18,14 +18,6 @@ public class Listener {
     protected Object AXLEREF;
     protected String AXLEClass;
     
-    //Abstract interceptor.
-    public abstract class accelerator implements Runnable{
-        CoveredSocket CLIENT;
-        public accelerator(CoveredSocket CLIENT){
-            this.CLIENT = CLIENT;
-        }
-    }
-    
     //Base listener interceptor.
     public class Accel extends accelerator{
         public Accel(CoveredSocket CLIENT){

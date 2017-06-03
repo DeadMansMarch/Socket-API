@@ -5,6 +5,7 @@
  */
 package SocketApi;
 
+import INET.IAddress;
 import LOCAL.FileSys;
 import static SocketApi.CoveredSocket.FormatType.NewLine;
 import java.io.IOException;
@@ -59,10 +60,10 @@ public class ProtocolCompiler {
         Client.formatSend("Content-Type: " + EndingTypes.get(FileEnding), NewLine);
         boolean isImage = Types.get(FileEnding).equals("image");
         if (isImage){
-            Client.baseSend("\n");
+            Client.baseSend("\r\n\r\n");
             return null;
         }
-        Client.baseSend("\n");
+        Client.baseSend("\r\n\r\n");
         return Page;
     }
     
@@ -70,5 +71,12 @@ public class ProtocolCompiler {
     public static void Compile(CoveredSocket Client, int Status) throws IOException{
         Client.formatSend("HTTP/1.1 " + Status + " " + StatusFlags.get(Status), NewLine);
         Client.formatSend("Server:LMX", NewLine);
+    }
+    
+    public static void CompileGET(CoveredSocket Server, IAddress Location,String Page) throws IOException{
+        Server.formatSend("GET " + Page + " HTTP/1.1",NewLine);
+        Server.formatSend("Host: " + Location.getADDRESS(),NewLine);
+        Server.formatSend("Connection: Keep-Alive",NewLine);
+        Server.baseSend("\n");
     }
 }
