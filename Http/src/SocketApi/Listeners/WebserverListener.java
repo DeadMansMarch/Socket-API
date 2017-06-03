@@ -16,7 +16,6 @@ import SocketApi.ProtocolCompiler;
 import SocketApi.ProtocolParser;
 import java.io.IOException;
 import static java.lang.System.exit;
-import java.net.Socket;
 import java.util.ArrayList;
 
 /**
@@ -88,5 +87,4 @@ public class WebserverListener extends Listener {
             }
         }
     }
-    
 }

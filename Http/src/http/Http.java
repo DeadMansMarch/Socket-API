@@ -7,11 +7,8 @@ package http;
 
 import INET.IAddress;
 import INET.Site;
-import LOCAL.FileSys;
-import SocketApi.Listeners.Listener;
 import SocketApi.Listeners.WebserverListener;
 import static java.lang.System.exit;
-import static LOCAL.FileSys.EncodeBase64;
 import java.io.File;
 import java.net.URISyntaxException;
 /**
