@@ -18,14 +18,16 @@ import org.omg.CORBA.Any;
  *
  * @author DeadMansMarch
  */
-public class CoveredClient {
+
+//Contains items relevant to client interaction.
+public class CoveredSocket {
     public Socket CLIENT;
     protected OutputStream OUTSTREAM;
     protected InputStreamReader INSTREAM;
     protected DataOutputStream COUTSTREAM;
     protected BufferedReader CINSTREAM;
     public Thread REFER;
-    public CoveredClient(Socket CLIENT) throws IOException{
+    public CoveredSocket(Socket CLIENT) throws IOException{
         this.CLIENT = CLIENT;
         
         OUTSTREAM = CLIENT.getOutputStream(); 
@@ -33,6 +35,10 @@ public class CoveredClient {
         
         INSTREAM = new InputStreamReader(CLIENT.getInputStream());
         CINSTREAM = new BufferedReader(INSTREAM);
+    }
+    
+    public OutputStream getOutstream(){
+        return OUTSTREAM;
     }
     
     public void close() throws IOException{

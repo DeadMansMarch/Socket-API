@@ -7,17 +7,17 @@ package SocketApi.Listeners;
 
 import INET.IAddress;
 import INET.Site;
-import SocketApi.CoveredClient;
-import static SocketApi.CoveredClient.FormatType.Dump;
-import static SocketApi.CoveredClient.FormatType.LenMat;
-import static SocketApi.CoveredClient.FormatType.NewLine;
+import LOCAL.FileSys;
+import SocketApi.CoveredSocket;
+import static SocketApi.CoveredSocket.FormatType.Dump;
+import SocketApi.Listeners.WebserverListener.Accel;
 import SocketApi.ParsedProtocol;
 import SocketApi.ProtocolCompiler;
 import SocketApi.ProtocolParser;
 import java.io.IOException;
 import static java.lang.System.exit;
+import java.net.Socket;
 import java.util.ArrayList;
-import org.omg.CORBA.Any;
 
 /**
  *
@@ -28,37 +28,30 @@ public class WebserverListener extends Listener {
     Site LOADEDSITE = new Site();
     ArrayList<Thread> THREADER = new ArrayList<>();
     
-    public WebserverListener(IAddress To) throws IOException{
+    //Can host webservers. Pretty low quality server atm.
+    public WebserverListener(IAddress To) throws IOException, ClassNotFoundException{
         super(To);
-        super.Acceptor = OAcceptor;
+        super.preLoad(this.getClass().getName(), this);
+        
+        try{
+            this.preLoad(Accel.class.getName());
+        }catch(ClassNotFoundException E){
+            System.out.println(E);
+            exit(3);
+        }
     }
     
+    //Will load a Site object from package INET for use in the server.
     public void loadSite(Site LOAD){
         this.LOADEDSITE = LOAD;
     }
     
-    Thread OAcceptor = new Thread(new Runnable(){
-        public void run(){
-            System.out.println("Listening.");
-            while (true){
-                try{
-                    CoveredClient Client = new CoveredClient(Listen.accept()); //Newing isn't great.
-                    Client.REFER = new Thread(new Accel(Client));
-                    Client.REFER.start();
-                }catch(IOException E){
-                    System.out.println(E.getMessage());
-                    exit(2);
-                }
-            }
+    //Webserver client intercept.
+    public class Accel extends Listener.accelerator{
+        public Accel(CoveredSocket CLIENT){
+            super(CLIENT);
         }
-    });
-    
-    class Accel implements Runnable{
-        CoveredClient CLIENT;
-        public Accel(CoveredClient CLIENT){
-            this.CLIENT = CLIENT;
-        }
-       
+        
         public void run(){
             try{
                 ParsedProtocol Request;
@@ -73,21 +66,27 @@ public class WebserverListener extends Listener {
 
                 String Path = Request.Get(ParsedProtocol.DataType.PATH);
                 Path = (Path.equals("/")) ? Path + LOADEDSITE.DEFAULT : Path;
-                System.out.println(Path);
                 String Site = LOADEDSITE.getFile(Path);
+                String File = Path.substring(Path.lastIndexOf("/") + 1);
+                String FileRel = FileSys.load(Site);
                 if (Site == null) {
                     ProtocolCompiler.Compile(CLIENT, 404);
                     CLIENT.close();
                 }
-
-                ProtocolCompiler.Compile(CLIENT, 200, Path.substring(Path.lastIndexOf("/") + 1));
+                Site = ProtocolCompiler.Compile(CLIENT, 200, File, FileRel);
+                if (Site != null){
+                    System.out.println(Site);
+                    CLIENT.formatSend(FileRel, Dump);
+                }else{
+                    System.out.println(LOADEDSITE.getFile(Path));
+                    FileSys.streamImage(LOADEDSITE.getFile(Path), CLIENT.getOutstream());
+                }
                 
-                CLIENT.formatSend(Site, Dump);
-
                 CLIENT.close();
             }catch(Exception E){
                 System.out.println(E);
             }
         }
     }
+    
 }

@@ -18,9 +18,8 @@ public class Site {
     private HashMap<String,String> Caretaker = new HashMap<>();
     private HashMap<String,ArrayList<String>> Directories = new HashMap<>();
     
-    public Site(){
-    }
-    
+    //Creates a file at an arbitrary file path:
+    //Could be "/Users/User", or "random123", it wont care.
     public void addFile(String Path,String File){
         Caretaker.put(Path, File);
         
@@ -39,11 +38,12 @@ public class Site {
         }
         
     }
-    
+    //Gets a file from the fake file system.
     public String getFile(String Path){
         return Caretaker.get(Path);
     }
     
+    //Returns a list of the files in one of the arbitrary paths.
     public String[] List(String Path){
         if (Directories.get(Path) != null){
             return (String[]) Directories.get(Path).toArray(new String[Directories.get(Path).size()]);

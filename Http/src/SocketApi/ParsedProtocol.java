@@ -14,6 +14,7 @@ import java.util.HashMap;
  * @author DeadMansMarch
  */
 public class ParsedProtocol {
+    //Protocol parameters this webserver understands.
     public enum DataType{
         RTYPE,PATH,HOST,USERAGENT,ACCEPT,DNT,CONNECTION,REFERER,ACCEPTENCODING,ACCEPTLANGUAGE,
         UPGRADEINSECUREREQUESTS,CACHECONTROL,PRAGMA;
@@ -22,14 +23,12 @@ public class ParsedProtocol {
     public HashMap<DataType,String> Data = new HashMap<>();
     public Protocol PTYPE = UNKNOWN;
     
-    public ParsedProtocol(){
-        
-    }
-    
+    //Adds a parameter protocol if it conforms with a given datatype.
     public void Fill(DataType toFill,String with){
         Data.put(toFill,with);
     }
     
+    //Adds a parameter protocol if it conforms with a given datatype.
     public void Fill(String toFill,String with){
         try{
             Fill(DataType.valueOf(toFill),with);
@@ -38,10 +37,12 @@ public class ParsedProtocol {
         }
     }
     
+    //Returns a specific data parameter from protocol.
     public String Get(DataType toGet){
         return Data.get(toGet);
     }
     
+    //Returns a specific data parameter from protocol.
     public String Get(String toGet){
         return Get(DataType.valueOf(toGet));
     }

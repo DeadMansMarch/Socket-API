@@ -13,10 +13,12 @@ import java.util.ArrayList;
  * @author DeadMansMarch
  */
 public class ProtocolParser {
+    //Contains different protocol types.
     public enum Protocol{
         UNKNOWN, HTTP1_1;
     }
     
+    //For errors in protocol syntax from client.
     public static class ProtocolSyntaxException extends Exception{
         public ProtocolSyntaxException(){
             super();
@@ -27,7 +29,8 @@ public class ProtocolParser {
         }
     }
     
-    public static ParsedProtocol parse(CoveredClient Client, Protocol Proto) throws IOException, ProtocolSyntaxException{
+    //Break protocol down into parameters given the protocol.
+    public static ParsedProtocol parse(CoveredSocket Client, Protocol Proto) throws IOException, ProtocolSyntaxException{
         ParsedProtocol Parse = new ParsedProtocol();
         switch (Proto){
             case HTTP1_1:
@@ -59,7 +62,8 @@ public class ProtocolParser {
         return Parse;
     }
     
-    public static ParsedProtocol parse(CoveredClient Client) throws Exception{
+    //Break down protocol into parameters given exchange. ((Could)) get protocol wrong.
+    public static ParsedProtocol parse(CoveredSocket Client) throws Exception{
         Protocol Proto;
         
         Client.CINSTREAM.mark(1); //Take a look at the data without trashing it.

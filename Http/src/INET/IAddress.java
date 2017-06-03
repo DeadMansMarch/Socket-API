@@ -18,15 +18,18 @@ public class IAddress extends SocketAddress{
     private String ADDRESS;
     private int PORT;
     
+    //Create an address.
     public IAddress(String ADDRESS,int PORT){
         this.ADDRESS = ADDRESS;
         this.PORT = PORT;
     }
     
+    //Get an INET.
     public InetAddress PrepINET() throws UnknownHostException{
         return InetAddress.getByName(ADDRESS);
     }
     
+    //Get an InetSocketAddress.
     public InetSocketAddress PrepISOCK() throws UnknownHostException{
         return new InetSocketAddress(this.PrepINET(),PORT);
     }
