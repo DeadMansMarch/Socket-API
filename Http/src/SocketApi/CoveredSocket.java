@@ -46,9 +46,9 @@ public class CoveredSocket {
     }
     
     public void close() throws IOException{
-        REFER.interrupt();
+        if (REFER != null) REFER.interrupt();
+        
         CLIENT.close();
-        System.out.println("AXLE DEATH");
     }
     
     public void baseSend(String Data) throws IOException{

@@ -11,12 +11,15 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import static java.lang.System.exit;
 import java.util.HashMap;
+import java.util.function.Consumer;
 
 public class Listener {
     protected ServerSocket Listen;
     protected String AXLESUB;
     protected Object AXLEREF;
     protected String AXLEClass;
+    protected Object AXLE;
+    protected Consumer<? super accelerator> AXLEDRIVE;
     
     //Base listener interceptor.
     public class Accel extends accelerator{
@@ -38,22 +41,30 @@ public class Listener {
     protected class Acceptor implements Runnable{
         Object XCLASS;
         String XREF;
-        public Acceptor(String XREF,Object XCLASS){
+        Consumer<? super accelerator> DRIVE;
+        public Acceptor(String XREF,Object XCLASS,Consumer<? super accelerator> DRIVE){
+            System.out.println("Acceptor updated.");
             this.XREF = XREF;
             this.XCLASS=XCLASS;
+            this.DRIVE = DRIVE;
         }
+        
         
         public void run(){
             System.out.println("Listening.");
-            while (true){
+            while (true && !Thread.currentThread().isInterrupted()){
                 try{
                     CoveredSocket Client = new CoveredSocket(Listen.accept());
+                    if (Thread.currentThread().isInterrupted()){
+                        Client.close();
+                        return;
+                    }
                     System.out.println("Caught : " + Client.describe());
                     if (AXLEClass != null){
-                        
-                        System.out.println(XREF);
                         accelerator AXLE = (accelerator) (Class.forName(AXLEClass).getConstructor(Class.forName(XREF),CoveredSocket.class).newInstance(new Object[] {XCLASS,Client}));
-                        System.out.println("AXLE CREATED");
+                        if (this.DRIVE != null){
+                            DRIVE.accept(AXLE);
+                        }
                         Thread RUN = new Thread(AXLE);
                         Client.REFER = RUN;
                         Client.REFER.start();
@@ -61,13 +72,26 @@ public class Listener {
                         System.out.println("NO ACCEL THREAD : PLEASE SPECIFY BEFORE ACTIVATING");
                     }
                 }catch(Exception E){
-                    System.out.println(E.getMessage());
                     System.out.println(E);
+                    E.printStackTrace();
                     exit(2);
                 }
             }
         }
      }
+    
+    public Object getRef(){
+        return this.AXLEREF;
+    }
+    
+    public void reloadAcceptor(){
+        this.Activate(true);
+    }
+    
+    public void DRIVEAXLE(Consumer<? super accelerator> ACTOR){
+        this.AXLEDRIVE = ACTOR;
+        System.out.println("Casing actor: " + ACTOR.toString());
+    }
      
     //Preloads only a class for intercepting. May cause errors without SUB and REF (unchecked).
     public void preLoad(String AXLE) throws ClassNotFoundException{
@@ -107,10 +131,10 @@ public class Listener {
     //Starts the listener.
     public void Activate(boolean Active){
         if (Acceptor != null) Acceptor.interrupt();
-        Acceptor = new Thread(new Acceptor(this.AXLESUB,this.AXLEREF));
-        
+        Acceptor = new Thread(new Acceptor(this.AXLESUB,this.AXLEREF,this.AXLEDRIVE));
+        System.out.println("Activated with new thread.");
         if (Active) Acceptor.start();
-        else Acceptor.interrupt();
+        else Acceptor.stop();
     }
     
 }
