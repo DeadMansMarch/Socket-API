@@ -6,11 +6,11 @@
 package SocketApi.Listeners;
 
 import INET.IAddress;
+import LOCAL.Log;
 import SocketApi.CoveredSocket;
 import java.io.IOException;
 import java.net.ServerSocket;
 import static java.lang.System.exit;
-import java.util.HashMap;
 import java.util.function.Consumer;
 
 public class Listener {
@@ -38,12 +38,12 @@ public class Listener {
     
     protected Thread Acceptor;
     
-    protected class Acceptor implements Runnable{
+    public class Acceptor implements Runnable{
         Object XCLASS;
         String XREF;
         Consumer<? super accelerator> DRIVE;
         public Acceptor(String XREF,Object XCLASS,Consumer<? super accelerator> DRIVE){
-            System.out.println("Acceptor updated.");
+            Log.Write(this,"Acceptor updated.");
             this.XREF = XREF;
             this.XCLASS=XCLASS;
             this.DRIVE = DRIVE;
@@ -51,7 +51,7 @@ public class Listener {
         
         
         public void run(){
-            System.out.println("Listening.");
+            Log.Write(this,"Listening");
             while (true && !Thread.currentThread().isInterrupted()){
                 try{
                     CoveredSocket Client = new CoveredSocket(Listen.accept());
@@ -59,7 +59,7 @@ public class Listener {
                         Client.close();
                         return;
                     }
-                    System.out.println("Caught : " + Client.describe());
+                    Log.Write(this,"Caught : " + Client.describe());
                     if (AXLEClass != null){
                         accelerator AXLE = (accelerator) (Class.forName(AXLEClass).getConstructor(Class.forName(XREF),CoveredSocket.class).newInstance(new Object[] {XCLASS,Client}));
                         if (this.DRIVE != null){
@@ -69,7 +69,7 @@ public class Listener {
                         Client.REFER = RUN;
                         Client.REFER.start();
                     }else{
-                        System.out.println("NO ACCEL THREAD : PLEASE SPECIFY BEFORE ACTIVATING");
+                        Log.Write(this,"NO ACCEL THREAD : PLEASE SPECIFY BEFORE ACTIVATING");
                     }
                 }catch(Exception E){
                     System.out.println(E);
@@ -90,7 +90,7 @@ public class Listener {
     
     public void DRIVEAXLE(Consumer<? super accelerator> ACTOR){
         this.AXLEDRIVE = ACTOR;
-        System.out.println("Casing actor: " + ACTOR.toString());
+        Log.Write(this,"Casing actor: " + ACTOR.toString());
     }
      
     //Preloads only a class for intercepting. May cause errors without SUB and REF (unchecked).
@@ -114,10 +114,10 @@ public class Listener {
     
     //Main constructor, links a socket to IAddress To, then waits for an activation.
     public Listener(IAddress To) throws IOException, ClassNotFoundException{
-        System.out.print("Binding...");
+        Log.WriteL(this.getClass(),"Binding...");
         Listen = new ServerSocket();
         Listen.bind(To.PrepISOCK());
-        System.out.print(" To:");
+        Log.WriteL(this.getClass()," To:");
         System.out.println(Listen.getInetAddress() + ":" + Listen.getLocalPort());
         preLoad(Listener.Accel.class.getName());
     }
@@ -132,7 +132,7 @@ public class Listener {
     public void Activate(boolean Active){
         if (Acceptor != null) Acceptor.interrupt();
         Acceptor = new Thread(new Acceptor(this.AXLESUB,this.AXLEREF,this.AXLEDRIVE));
-        System.out.println("Activated with new thread.");
+        Log.Write(this,"Activated with new thread.");
         if (Active) Acceptor.start();
         else Acceptor.stop();
     }

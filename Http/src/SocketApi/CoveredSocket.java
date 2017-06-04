@@ -5,6 +5,7 @@
  */
 package SocketApi;
 
+import LOCAL.Log;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -47,7 +48,7 @@ public class CoveredSocket {
     
     public void close() throws IOException{
         if (REFER != null) REFER.interrupt();
-        
+        Log.Write("Socket Closed");
         CLIENT.close();
     }
     
@@ -62,6 +63,10 @@ public class CoveredSocket {
     public String baseRead() throws IOException{
         if (CINSTREAM.ready()) return CINSTREAM.readLine();
         throw new IOException("Reading empty stream.");
+    }
+
+    public String whois() {
+        return this.CLIENT.getLocalAddress().toString();
     }
     
     public enum FormatType{

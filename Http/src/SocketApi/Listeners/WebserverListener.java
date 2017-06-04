@@ -8,6 +8,7 @@ package SocketApi.Listeners;
 import INET.IAddress;
 import INET.Site;
 import LOCAL.FileSys;
+import LOCAL.Log;
 import SocketApi.CoveredSocket;
 import static SocketApi.CoveredSocket.FormatType.Dump;
 import SocketApi.Listeners.WebserverListener.Accel;
@@ -35,7 +36,7 @@ public class WebserverListener extends Listener {
         try{
             this.preLoad(Accel.class.getName());
         }catch(ClassNotFoundException E){
-            System.out.println(E);
+            Log.Write(this,E);
             exit(3);
         }
     }
@@ -57,13 +58,13 @@ public class WebserverListener extends Listener {
                 try {
                     Request = ProtocolParser.parse(CLIENT);
                 } catch (Exception E) {
-                    System.out.println(E.toString());
+                    Log.Write(this,E.toString());
                     ProtocolCompiler.Compile(CLIENT, 400);
-                    System.out.println("Recieved malformed request.");
+                    Log.Write(this,"Recieved malformed request.");
                     return;
                 }
 
-                String Path = Request.Get(ParsedProtocol.DataType.PATH);
+                String Path = Request.Get("PATH");
                 Path = (Path.equals("/")) ? Path + LOADEDSITE.DEFAULT : Path;
                 String Site = LOADEDSITE.getFile(Path);
                 String File = Path.substring(Path.lastIndexOf("/") + 1);
@@ -74,16 +75,16 @@ public class WebserverListener extends Listener {
                 }
                 Site = ProtocolCompiler.Compile(CLIENT, 200, File, FileRel);
                 if (Site != null){
-                    System.out.println(Site);
+                    Log.Write(this,Site);
                     CLIENT.formatSend(FileRel, Dump);
                 }else{
-                    System.out.println(LOADEDSITE.getFile(Path));
+                    Log.Write(this,LOADEDSITE.getFile(Path));
                     FileSys.streamImage(LOADEDSITE.getFile(Path), CLIENT.getOutstream());
                 }
                 
                 CLIENT.close();
             }catch(Exception E){
-                System.out.println(E);
+                Log.Write(this,E);
             }
         }
     }

@@ -5,13 +5,16 @@
  */
 package ConnectionNet;
 
-import ConnectionNet.ConnectionNet.ChainPosition;
 import SocketApi.CoveredSocket;
 
 /**
  *
  * @author DeadMansMarch
  */
-public interface Connectable {
-    public ChainPosition Sequence(ChainPosition Type);
+public abstract class Sequencer implements Connectable {
+    private CoveredSocket CLIENT;
+    
+    public void preLoad(CoveredSocket SEQ){
+        this.CLIENT = SEQ;
+    }
 }

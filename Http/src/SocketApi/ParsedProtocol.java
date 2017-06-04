@@ -5,6 +5,7 @@
  */
 package SocketApi;
 
+import LOCAL.Log;
 import SocketApi.ProtocolParser.Protocol;
 import static SocketApi.ProtocolParser.Protocol.UNKNOWN;
 import java.util.HashMap;
@@ -20,31 +21,27 @@ public class ParsedProtocol {
         UPGRADEINSECUREREQUESTS,CACHECONTROL,PRAGMA;
     }
     
-    public HashMap<DataType,String> Data = new HashMap<>();
+   
+    
+    public HashMap<String,String> Data = new HashMap<>();
     public Protocol PTYPE = UNKNOWN;
     
-    //Adds a parameter protocol if it conforms with a given datatype.
-    public void Fill(DataType toFill,String with){
-        Data.put(toFill,with);
-    }
-    
-    //Adds a parameter protocol if it conforms with a given datatype.
+    //Adds a parameter protocol
     public void Fill(String toFill,String with){
         try{
-            Fill(DataType.valueOf(toFill),with);
+            Data.put(toFill, with);
         }catch(Exception E){
-            System.out.println(E.getMessage());
+            Log.Write(ParsedProtocol.class,E.getMessage());
         }
     }
     
-    //Returns a specific data parameter from protocol.
-    public String Get(DataType toGet){
-        return Data.get(toGet);
+    public boolean Contains(String Cont){
+        return Data.containsKey(Cont);
     }
     
     //Returns a specific data parameter from protocol.
     public String Get(String toGet){
-        return Get(DataType.valueOf(toGet));
+        return Data.get(toGet);
     }
     
     
